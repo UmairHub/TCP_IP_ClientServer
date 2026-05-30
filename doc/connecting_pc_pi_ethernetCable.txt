@@ -29,14 +29,14 @@ STEP 2: Assign Static IP Addresses
 Purpose: Configure IP addresses manually (no DHCP server available)
 
 On Ubuntu PC:
-  sudo ip addr add 192.168.10.1/24 dev enp6s0
+  sudo ip addr add 192.168.10.2/24 dev enp6s0
 
 On Raspberry Pi:
-  sudo ip addr add 192.168.10.2/24 dev eth0
+  sudo ip addr add 192.168.10.1/24 dev eth0
 
 Details:
-  - PC IP:  192.168.10.1
-  - Pi IP:  192.168.10.2
+  - PC IP:  192.168.10.2
+  - Pi IP:  192.168.10.1
   - Subnet: 192.168.10.0/24 (255.255.255.0)
   - Interface: enp6s0 (Ubuntu), eth0 (Raspberry Pi)
 
@@ -46,10 +46,10 @@ STEP 3: Test Network Connectivity
 Purpose: Verify that both machines can communicate
 
 From Ubuntu PC (ping Raspberry Pi):
-  ping 192.168.10.2
+  ping 192.168.10.1
 
 From Raspberry Pi (ping Ubuntu PC):
-  ping 192.168.10.1
+  ping 192.168.10.2
 
 Expected Result:
   - Successful ping responses confirm connectivity
@@ -61,7 +61,7 @@ STEP 4: (Optional) SSH Access
 Purpose: Remote terminal access to Raspberry Pi
 
 Command:
-  ssh pi@192.168.10.2
+  ssh pi@192.168.10.1
 
 Usage:
   - Allows you to execute commands on the Raspberry Pi remotely
@@ -74,10 +74,10 @@ STEP 5: File Transfer
 Purpose: Copy files between Ubuntu PC and Raspberry Pi
 
 Copy file to Raspberry Pi:
-  scp myfile.txt pi@192.168.10.2:~
+  scp myfile.txt pi@192.168.10.1:~
 
 Copy file from Raspberry Pi:
-  scp pi@192.168.10.2:~/myfile.txt .
+  scp pi@192.168.10.1:~/myfile.txt .
 
 Details:
   - Uses SSH Secure Copy Protocol

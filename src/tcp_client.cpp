@@ -348,7 +348,9 @@ int main(int argc, char **argv) {
         oss << std::fixed << std::setprecision(2);
         oss << "{\"temp\":" << temperature << ",\"pres\":" << pressure << ",\"hum\":" << humidity << "}";
 
-        if (!sender.sendLine(oss.str())) {
+        if (sender.sendLine(oss.str())) {
+            std::cout << "Sent: " << oss.str() << "\n";
+        } else {
             std::cerr << "Failed to send to server " << server_host << ":" << server_port << " (will retry)\n";
         }
 
