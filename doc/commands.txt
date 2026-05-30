@@ -1,0 +1,53 @@
+﻿
+================================================================================
+                           BUILD & DEPLOYMENT COMMANDS
+================================================================================
+
+## BUILD COMMANDS
+
+### Cross-compile TCP Client (Raspberry Pi ARM64 Application)
+Purpose: Compile the client application for ARM architecture (Raspberry Pi)
+
+Command:
+  aarch64-linux-gnu-g++ -std=c++17 -O2 -Wall -pthread -o test_app_aarch64 \
+    /home/umair/Data/04_C++/03_Demo/test_app.cpp
+
+Flags:
+  -std=c++17       : Use C++17 standard
+  -O2              : Optimization level 2
+  -Wall            : Enable all warnings
+  -pthread         : Enable POSIX threading support
+  -o test_app_aarch64 : Output executable name
+
+
+### Compile TCP Server (Local Ubuntu Machine)
+Purpose: Compile the server application for x86/x64 architecture
+
+Command:
+  g++ -std=c++17 -O2 -Wall -pthread -o tcp_server tcp_server.cpp
+
+Flags:
+  -std=c++17       : Use C++17 standard
+  -O2              : Optimization level 2
+  -Wall            : Enable all warnings
+  -pthread         : Enable POSIX threading support
+  -o tcp_server    : Output executable name
+
+
+## FILE TRANSFER COMMAND
+
+### Copy Compiled Binary to Raspberry Pi
+Purpose: Transfer the compiled ARM64 executable to the Raspberry Pi
+
+Command:
+  scp /home/umair/Data/04_C++/03_Demo/test_app_aarch64 \
+      umair@192.168.178.37:/home/umair/
+
+Details:
+  - Transfers test_app_aarch64 from local machine to Pi
+  - Destination: /home/umair/ on Raspberry Pi
+  - IP Address: 192.168.178.37
+  - Username: umair
+  - Uses SSH secure copy protocol
+
+================================================================================
