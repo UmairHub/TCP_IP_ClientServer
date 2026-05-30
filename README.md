@@ -1,12 +1,14 @@
 # TCP/IP Client-Server Application
 
-A C++ implementation of TCP/IP client-server communication with support for cross-compilation to ARM64 (Raspberry Pi) and standard Linux systems.
+A C++ implementation of TCP/IP client-server communication with cross-platform support. This application runs a TCP/IP server on Ubuntu and communicates with a TCP/IP client running on a Raspberry Pi (ARM64 architecture).
 
 ## Overview
 
 This project includes:
-- **TCP Server**: A multi-threaded server application
+- **TCP Server**: A multi-threaded server application running on Ubuntu
 - **TCP Client**: A client application for Raspberry Pi (ARM64 architecture)
+
+The server and client communicate over TCP/IP network, enabling data exchange between an Ubuntu system and a Raspberry Pi.
 
 ## Build Instructions
 
@@ -30,9 +32,9 @@ aarch64-linux-gnu-g++ -std=c++17 -O2 -Wall -pthread -o test_app_aarch64 /home/um
 - `-Wall`: Enable all compiler warnings
 - `-pthread`: Enable POSIX threading
 
-### Compiling TCP Server
+### Compiling TCP Server (Ubuntu)
 
-Build for the local system:
+Build for the local Ubuntu system:
 
 ```bash
 g++ -std=c++17 -O2 -Wall -pthread -o tcp_server tcp_server.cpp
@@ -40,19 +42,29 @@ g++ -std=c++17 -O2 -Wall -pthread -o tcp_server tcp_server.cpp
 
 ## Usage
 
-After successful compilation, run the applications:
+### Setup
 
+1. Compile the TCP Server on your Ubuntu machine
+2. Cross-compile the TCP Client for your Raspberry Pi
+3. Transfer the compiled client binary to your Raspberry Pi
+
+### Running the Application
+
+**On Ubuntu (Server):**
 ```bash
-# Start the server
 ./tcp_server
+```
 
-# Connect with the client
+**On Raspberry Pi (Client):**
+```bash
 ./test_app_aarch64
 ```
 
+The client will connect to the server over TCP/IP for bidirectional communication.
+
 ## Project Structure
 
-- `tcp_server.cpp`: Server implementation
+- `tcp_server.cpp`: Server implementation (Ubuntu)
 - `test_app.cpp`: Client implementation (Raspberry Pi target)
 
 ---
