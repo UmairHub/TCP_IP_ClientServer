@@ -1,3 +1,5 @@
+// ─── Includes ────────────────────────────────────────────────────────────────
+
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
@@ -16,11 +18,16 @@
 #include <vector>
 #include <iomanip>
 
+// ─── Globals ─────────────────────────────────────────────────────────────────
+
 static std::atomic<bool> running{true};
 static std::mutex cout_mtx;
 
+// ─── Client Handler ──────────────────────────────────────────────────────────
+
 void handle_client(int client_fd, sockaddr_in addr)
 {
+    // -- Resolve client address --
     char addr_str[INET_ADDRSTRLEN] = {0};
     inet_ntop(AF_INET, &addr.sin_addr, addr_str, sizeof(addr_str));
     int port = ntohs(addr.sin_port);
@@ -30,6 +37,7 @@ void handle_client(int client_fd, sockaddr_in addr)
         std::cout << "Client connected: " << addr_str << ":" << port << " (fd=" << client_fd << ")\n";
     }
 
+    // -- Read loop --
     std::string buffer;
     buffer.reserve(1024);
     char tmp[512];
@@ -66,18 +74,24 @@ void handle_client(int client_fd, sockaddr_in addr)
         }
     }
 
+    // -- Cleanup --
     close(client_fd);
     std::lock_guard<std::mutex> lg(cout_mtx);
     std::cout << "Client disconnected: " << addr_str << ":" << port << "\n";
 }
+
+// ─── Signal Handler ──────────────────────────────────────────────────────────
 
 void sigint_handler(int)
 {
     running = false;
 }
 
+// ─── Main ────────────────────────────────────────────────────────────────────
+
 int main(int argc, char **argv)
 {
+    // -- Parse port argument --
     int port = 4000;
     if (argc >= 2) {
         port = std::stoi(argv[1]);
@@ -86,6 +100,7 @@ int main(int argc, char **argv)
 
     signal(SIGINT, sigint_handler);
 
+    // -- Create and configure socket --
     int listen_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (listen_fd < 0) {
         std::cerr << "socket() failed: " << strerror(errno) << std::endl;
@@ -95,10 +110,11 @@ int main(int argc, char **argv)
     int opt = 1;
     setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
 
+    // -- Bind --
     sockaddr_in addr;
     std::memset(&addr, 0, sizeof(addr));
     addr.sin_family = AF_INET;
-    addr.sin_addr.s_addr = INADDR_ANY;
+    addr.sin_addr.s_addr = INADDR_ANY; // listen on all network interfaces (eth0, wlan0, lo)
     addr.sin_port = htons(port);
 
     if (bind(listen_fd, (sockaddr*)&addr, sizeof(addr)) < 0) {
@@ -107,6 +123,7 @@ int main(int argc, char **argv)
         return 1;
     }
 
+    // -- Listen --
     if (listen(listen_fd, 10) < 0) {
         std::cerr << "listen() failed: " << strerror(errno) << std::endl;
         close(listen_fd);
@@ -118,6 +135,7 @@ int main(int argc, char **argv)
         std::cout << "TCP server listening on port " << port << "\n";
     }
 
+    // -- Accept loop --
     std::vector<std::thread> threads;
     while (running) {
         sockaddr_in cli_addr;
@@ -134,6 +152,7 @@ int main(int argc, char **argv)
         threads.back().detach();
     }
 
+    // -- Shutdown --
     close(listen_fd);
     running = false;
     std::cout << "Server shutting down...\n";
