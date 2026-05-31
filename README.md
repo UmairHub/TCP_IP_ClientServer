@@ -23,7 +23,7 @@ The server and client communicate over TCP/IP network, enabling data exchange be
 Cross-compile for ARM64 architecture:
 
 ```bash
-aarch64-linux-gnu-g++ -std=c++17 -O2 -Wall -pthread -o test_app_aarch64 /home/umair/Data/04_C++/03_Demo/test_app.cpp
+aarch64-linux-gnu-g++ -std=c++17 -O2 -Wall -pthread -o tcp_client_aarch64 tcp_client.cpp
 ```
 
 **Flags explanation:**
@@ -57,7 +57,7 @@ g++ -std=c++17 -O2 -Wall -pthread -o tcp_server tcp_server.cpp
 
 **On Raspberry Pi (Client):**
 ```bash
-./test_app_aarch64
+./tcp_client_aarch64
 ```
 
 The client will connect to the server over TCP/IP for bidirectional communication.
