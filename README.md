@@ -79,6 +79,6 @@ The client will connect to the server over TCP/IP for bidirectional communicatio
 | BME280 | Pi 5 Pin     |
 |--------|--------------|
 | VCC    | 1 (3.3V)     |
-| GND    | 9 (GND)      |
+| GND    | 6 (GND)      |
 | SCL    | 5 (GPIO 3)   |
 | SDA    | 3 (GPIO 2)   |
