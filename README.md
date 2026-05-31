@@ -65,7 +65,7 @@ The client will connect to the server over TCP/IP for bidirectional communicatio
 ## Project Structure
 
 - `tcp_server.cpp`: Server implementation (Ubuntu)
-- `test_app.cpp`: Client implementation (Raspberry Pi target)
+- `tcp_client.cpp`: Client implementation (Raspberry Pi target)
 
 ---
 
