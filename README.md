@@ -70,3 +70,15 @@ The client will connect to the server over TCP/IP for bidirectional communicatio
 ---
 
 **Language:** C++17
+
+
+## BME280 Wiring (Raspberry Pi 5)
+
+![BME280 wiring diagram](doc/bme280_pi5_wiring_v2.svg)
+
+| BME280 | Pi 5 Pin     |
+|--------|--------------|
+| VCC    | 1 (3.3V)     |
+| GND    | 6 (GND)      |
+| SCL    | 5 (GPIO 3)   |
+| SDA    | 3 (GPIO 2)   |
