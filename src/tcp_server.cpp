@@ -59,7 +59,7 @@ void handle_client(int client_fd, sockaddr_in addr)
                 // print timestamp and payload
                 auto now = std::chrono::system_clock::now();
                 std::time_t t = std::chrono::system_clock::to_time_t(now);
-                std::lock_guard<std::mutex> lg(cout_mtx);
+                std::lock_guard<std::mutex> lock(cout_mtx);
                 std::cout << "[" << std::put_time(std::localtime(&t), "%Y-%m-%d %H:%M:%S") << "] ";
                 std::cout << addr_str << ":" << port << " -> " << line << std::endl;
             }
@@ -68,7 +68,7 @@ void handle_client(int client_fd, sockaddr_in addr)
             break;
         } else {
             if (errno == EINTR) continue;
-            std::lock_guard<std::mutex> lg(cout_mtx);
+            std::lock_guard<std::mutex> lock(cout_mtx);
             std::cerr << "Read error from " << addr_str << ":" << port << " -> " << strerror(errno) << std::endl;
             break;
         }
@@ -76,7 +76,7 @@ void handle_client(int client_fd, sockaddr_in addr)
 
     // -- Cleanup --
     close(client_fd);
-    std::lock_guard<std::mutex> lg(cout_mtx);
+    std::lock_guard<std::mutex> lock(cout_mtx);
     std::cout << "Client disconnected: " << addr_str << ":" << port << "\n";
 }
 
@@ -110,6 +110,7 @@ int main(int argc, char **argv)
     int opt = 1;
     setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
 
+    
     // -- Bind --
     sockaddr_in addr;
     std::memset(&addr, 0, sizeof(addr));
@@ -131,7 +132,7 @@ int main(int argc, char **argv)
     }
 
     {
-        std::lock_guard<std::mutex> lg(cout_mtx);
+        std::lock_guard<std::mutex> lock(cout_mtx);
         std::cout << "TCP server listening on port " << port << "\n";
     }
 
