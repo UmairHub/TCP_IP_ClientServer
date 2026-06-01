@@ -1,8 +1,7 @@
 # Executables
-tcp_client_aarch64
-tcp_server
-src/tcp_client_aarch64
-src/tcp_server
+**/tcp_client_aarch64
+**/tcp_server
+**/tcp_client
 
 # Compiled Object Files
 *.o
