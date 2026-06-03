@@ -1,3 +1,6 @@
+// Simple TCP echo server for localhost
+// Listens on a port, accepts one client, and echoes received lines back.
+
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
@@ -10,7 +13,10 @@
 
 static volatile bool running = true;
 
-static void sigint_handler(int) { running = false; }
+static void sigint_handler(int) 
+{ 
+    running = false; 
+}
 
 int main(int argc, char **argv)
 {
@@ -19,21 +25,26 @@ int main(int argc, char **argv)
 
     signal(SIGINT, sigint_handler);
 
+    // -- Create Socket --
     int listen_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (listen_fd < 0) { perror("socket"); return 1; }
 
+    // -- Set Socket Options --
     int opt = 1;
     setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
 
     sockaddr_in addr{};
     addr.sin_family = AF_INET;
     addr.sin_port   = htons(port);
+    // -- Configure Address --
     inet_pton(AF_INET, "127.0.0.1", &addr.sin_addr);
 
+    // -- Bind --
     if (bind(listen_fd, (sockaddr*)&addr, sizeof(addr)) < 0)
     {
         perror("bind"); close(listen_fd); return 1;
     }
+    // -- Listen --
     if (listen(listen_fd, 5) < 0)
     {
         perror("listen"); close(listen_fd); return 1;
@@ -43,6 +54,7 @@ int main(int argc, char **argv)
 
     while (running)
     {
+        // -- Accept --
         sockaddr_in cli_addr{};
         socklen_t cli_len = sizeof(cli_addr);
         int client_fd = accept(listen_fd, (sockaddr*)&cli_addr, &cli_len);
@@ -58,6 +70,7 @@ int main(int argc, char **argv)
         char tmp[512];
         while (running)
         {
+            // -- Read --
             ssize_t n = read(client_fd, tmp, sizeof(tmp));
             if (n > 0)
             {
@@ -75,6 +88,7 @@ int main(int argc, char **argv)
                     std::cout << "Received: " << line << "\n";
 
                     std::string reply = "ECHO: " + line + "\n";
+                    // -- Send --
                     send(client_fd, reply.data(), reply.size(), 0);
                 }
             }
@@ -85,14 +99,24 @@ int main(int argc, char **argv)
             }
             else
             {
-                if (errno == EINTR) continue;
-                perror("read"); break;
+                if (errno == EINTR)
+                {
+                    continue;
+                } 
+                    
+                perror("read");
+                {
+                    break;
+                }
+                    
             }
         }
 
+        // -- Close Client --
         close(client_fd);
     }
 
+    // -- Close Server --
     close(listen_fd);
     std::cout << "Server shut down.\n";
     return 0;
